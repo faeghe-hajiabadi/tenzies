@@ -5,6 +5,18 @@ import { nanoid } from "nanoid";
 
 function App() {
   const [dice, setDice] = useState(allNewDice());
+  const [tenzies, setTenzies]= useState(false);
+
+  useEffect(()=>{
+    const allHeld = dice.every(dice=> dice.isHeld);
+    const firstItem = dice[0].value;
+    const allSameValue = dice.every(dice=>dice.value===firstItem);
+    if(allHeld && allSameValue){
+      setTenzies(true);
+    }
+  },[dice]) 
+  
+  
   function allNewDice() {
     const newDice = [];
     for (let i = 0; i < 10; i++) {
@@ -38,11 +50,18 @@ function holdDice(id){
     );
   });
   function rollDice() {
-    setDice((oldDice) =>
+
+    if(!tenzies){
+      setDice((oldDice) =>
         oldDice.map((die) => {
           return die.isHeld ? die : generateNewDie();
         })
       );
+    }else{
+      setTenzies(false);
+      setDice(allNewDice())
+    }
+    
   }
   return (
     <main>
